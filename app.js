@@ -11,11 +11,6 @@ app.use(express.json());
 
 app.post("/cadastro", async (req, res) => {
   try {
-      const userData ={
-          name: req.body.name,
-          email: req.body.email,
-          password: req.body.password
-      }
     console.log(req.body);
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
@@ -27,7 +22,7 @@ app.post("/cadastro", async (req, res) => {
       res.sendStatus(409);
       return;
     }
-    await usersCollection.insertOne(userData)
+    await usersCollection.insertOne(req.body)
     res.sendStatus(200);
   } catch {
     res.sendStatus(500);
