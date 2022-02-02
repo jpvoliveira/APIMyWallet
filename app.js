@@ -54,7 +54,6 @@ app.post("/login", async (req, res) => {
 app.post("/entrada", async (req, res) => {
   try {
     const inputData = req.body;
-    console.log(inputData)
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
 
@@ -62,6 +61,35 @@ app.post("/entrada", async (req, res) => {
     const extratosCollection = dbAPIMyWallet.collection("extratos");
     const extrato = await extratosCollection.insertOne({ ...inputData });
     res.sendStatus(200);
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
+app.post("/saida", async (req, res) => {
+  try {
+    const outputData = req.body;
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
+    await mongoClient.connect();
+
+    const dbAPIMyWallet = mongoClient.db("APIMyWallet");
+    const extratosCollection = dbAPIMyWallet.collection("extratos");
+    const extrato = await extratosCollection.insertOne({ ...outputData });
+    res.sendStatus(200);
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
+app.get("/menu", async (req, res) => {
+  try {
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
+    await mongoClient.connect();
+
+    const dbAPIMyWallet = mongoClient.db("APIMyWallet");
+    const extratosCollection = dbAPIMyWallet.collection("extratos");
+    const extrato = await extratosCollection.find({ email: req.headers.email }).toArray();
+    res.send(extrato);
   } catch {
     res.sendStatus(500);
   }
