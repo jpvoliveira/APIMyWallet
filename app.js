@@ -33,4 +33,25 @@ app.post("/cadastro", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  try {
+    console.log(req.body)
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
+    await mongoClient.connect();
+
+    const dbAPIMyWallet = mongoClient.db("APIMyWallet");
+    const usersCollection = dbAPIMyWallet.collection("usuarios");
+    const user = await usersCollection.findOne({ email: req.body.email });
+    if (user && bcrypt.compareSync(req.body.password, user.password)) {
+      res.sendStatus(200);
+    }else{
+      res.sendStatus(401);
+    }
+    // await usersCollection.findOne(userData).toArray();
+    // console.log("encontrou")
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
 app.listen(5000);
