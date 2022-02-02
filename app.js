@@ -2,6 +2,7 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import cors from "cors";
 import dotenv from "dotenv";
+import bcrypt from 'bcrypt'
 
 dotenv.config();
 
@@ -11,19 +12,22 @@ app.use(express.json());
 
 app.post("/cadastro", async (req, res) => {
   try {
-    console.log(req.body);
+    const userData = req.body
+    userData.password = bcrypt.hashSync(req.body.password, 10)
+    console.log(userData)
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
 
     const dbAPIMyWallet = mongoClient.db("APIMyWallet");
     const usersCollection = dbAPIMyWallet.collection("usuarios");
-    const user = await usersCollection.findOne({email: req.body.email});
+    const user = await usersCollection.findOne({ email: req.body.email });
     if (user) {
       res.sendStatus(409);
       return;
     }
-    await usersCollection.insertOne(req.body)
+    await usersCollection.insertOne(userData);
     res.sendStatus(200);
+    mongoClient.close();
   } catch {
     res.sendStatus(500);
   }
