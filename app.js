@@ -42,7 +42,7 @@ app.post("/login", async (req, res) => {
     const usersCollection = dbAPIMyWallet.collection("usuarios");
     const user = await usersCollection.findOne({ email: req.body.email });
     if (user && bcrypt.compareSync(req.body.password, user.password)) {
-      res.sendStatus(200);
+      res.send(user);
     }else{
       res.sendStatus(401);
     }
