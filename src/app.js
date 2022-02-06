@@ -7,5 +7,5 @@ app.use(cors());
 app.use(express.json());
 app.use(router);
 
-// app.listen(process.env.PORT);
-app.listen(5000);
+app.listen(process.env.PORT);
+
